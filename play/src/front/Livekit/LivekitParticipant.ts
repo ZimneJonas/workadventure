@@ -387,6 +387,7 @@ export class LiveKitParticipant {
             once(event, callback) {
                 callback();
             },
+            priority: 9999,
         };
 
         this.highlightedEmbedScreenStore.toggleHighlight(streamable);
