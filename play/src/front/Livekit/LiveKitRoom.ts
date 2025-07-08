@@ -23,8 +23,8 @@ import { screenSharingLocalStreamStore as screenSharingLocalStream } from "../St
 import { SpaceInterface } from "../Space/SpaceInterface";
 import { nbSoundPlayedInBubbleStore, INbSoundPlayedInBubbleStore } from "../Stores/ApparentMediaContraintStore";
 import { StreamableSubjects } from "../Space/SpacePeerManager/SpacePeerManager";
+import { SCREEN_SHARE_STARTING_PRIORITY, VIDEO_STARTING_PRIORITY } from "../Stores/StreamableCollectionStore";
 import { LiveKitParticipant } from "./LivekitParticipant";
-import {SpaceUserExtended} from "../Space/SpaceFilter/SpaceFilter";
 export class LiveKitRoom {
     private room: Room | undefined;
     private localParticipant: LocalParticipant | undefined;
@@ -306,7 +306,12 @@ export class LiveKitRoom {
         for (const speaker of speakers) {
             const extendedVideoStream = this.space.videoStreamStore.get(speaker.identity);
             if (extendedVideoStream) {
-                extendedVideoStream.priority = priority;
+                // If this is a video and not a screen share, we add 2000 to the priority
+                if (extendedVideoStream.displayMode === "cover") {
+                    extendedVideoStream.priority = priority + VIDEO_STARTING_PRIORITY;
+                } else {
+                    extendedVideoStream.priority = priority + SCREEN_SHARE_STARTING_PRIORITY;
+                }
             }
             priority++;
         }
@@ -318,7 +323,6 @@ export class LiveKitRoom {
             const [key, value] = firstEntry.value;
             this.space.videoStreamStore.set(key, value);
         }
-
 
         //TODO : revoir impl iteration sur tout les participants a chaque fois
         this.participants.forEach((participant) => {

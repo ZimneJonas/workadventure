@@ -12,7 +12,11 @@ import * as Sentry from "@sentry/svelte";
 import { derived, Writable, writable } from "svelte/store";
 import { SpaceInterface, SpaceUserExtended } from "../Space/SpaceInterface";
 import { highlightedEmbedScreen } from "../Stores/HighlightedEmbedScreenStore";
-import { ExtendedStreamable } from "../Stores/StreamableCollectionStore";
+import {
+    ExtendedStreamable,
+    SCREEN_SHARE_STARTING_PRIORITY,
+    VIDEO_STARTING_PRIORITY,
+} from "../Stores/StreamableCollectionStore";
 import { StreamableSubjects } from "../Space/SpacePeerManager/SpacePeerManager";
 
 export class LiveKitParticipant {
@@ -333,6 +337,7 @@ export class LiveKitParticipant {
             once(event, callback) {
                 callback();
             },
+            priority: VIDEO_STARTING_PRIORITY,
         };
     }
 
@@ -387,7 +392,7 @@ export class LiveKitParticipant {
             once(event, callback) {
                 callback();
             },
-            priority: 9999,
+            priority: SCREEN_SHARE_STARTING_PRIORITY,
         };
 
         this.highlightedEmbedScreenStore.toggleHighlight(streamable);
