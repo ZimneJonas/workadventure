@@ -9,7 +9,7 @@ import {
     RemoteVideoTrack,
 } from "livekit-client";
 import * as Sentry from "@sentry/svelte";
-import { derived, Writable, writable } from "svelte/store";
+import { derived, get, Writable, writable } from "svelte/store";
 import { SpaceInterface, SpaceUserExtended } from "../Space/SpaceInterface";
 import { highlightedEmbedScreen } from "../Stores/HighlightedEmbedScreenStore";
 import {
@@ -76,6 +76,7 @@ export class LiveKitParticipant {
     private _videoRemoteTrack: RemoteTrack | undefined;
     private _screenShareRemoteTrack: RemoteTrack | undefined;
     private _isActiveSpeaker = writable<boolean>(false);
+    public lastSpeakTimestamp?: number;
 
     constructor(
         public participant: Participant,
@@ -338,6 +339,7 @@ export class LiveKitParticipant {
                 callback();
             },
             priority: VIDEO_STARTING_PRIORITY,
+            lastSpeakTimestamp: this.lastSpeakTimestamp,
         };
     }
 
@@ -401,6 +403,9 @@ export class LiveKitParticipant {
     }
 
     public setActiveSpeaker(isActiveSpeaker: boolean) {
+        if (get(this._isActiveSpeaker) === true && isActiveSpeaker === false) {
+            this.lastSpeakTimestamp = new Date().getTime();
+        }
         this._isActiveSpeaker.set(isActiveSpeaker);
     }
 

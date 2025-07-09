@@ -58,6 +58,7 @@ export class VideoPeer extends Peer implements Streamable {
     public readonly displayInPictureInPictureMode = true;
     public readonly usePresentationMode = false;
     public priority: number = VIDEO_STARTING_PRIORITY;
+    public lastSpeakTimestamp?: number;
 
     constructor(
         public user: UserSimplePeerInterface,
