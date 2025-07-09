@@ -303,6 +303,11 @@ export class LiveKitRoom {
     private handleActiveSpeakersChanged(speakers: Participant[]) {
         let priority = 0;
 
+        // Let's reset the priority of the participant
+        for (const videoStream of this.space.videoStreamStore.values()) {
+            videoStream.priority = VIDEO_STARTING_PRIORITY + 9999;
+        }
+
         for (const speaker of speakers) {
             const extendedVideoStream = this.space.videoStreamStore.get(speaker.identity);
             if (extendedVideoStream) {
